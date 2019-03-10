@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.HistoryActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_recall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:itemcount="2"
+            tools:listitem="@layout/card_recall" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_notify"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/recycler_view_recall"
+            tools:itemCount="12"
+            tools:listitem="@layout/card_notification" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/gradient_fade" />
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
