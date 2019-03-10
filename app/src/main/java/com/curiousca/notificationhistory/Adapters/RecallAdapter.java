@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.curiousca.notificationhistory.DataClasses.RecallItem;
+import com.curiousca.notificationhistory.Model.Payload;
 import com.curiousca.notificationhistory.R;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallViewHolder> {
 
     private Context mContext;
-    private ArrayList<RecallItem> mRecallItem;
+    private ArrayList<Payload> mPayload;
 
-    public RecallAdapter(Context context, ArrayList<RecallItem> recallItem) {
+    public RecallAdapter(Context context, ArrayList<Payload> recallItem) {
         this.mContext = context ;
-        this.mRecallItem = recallItem;
+        this.mPayload = recallItem;
     }
 
     public static class RecallViewHolder extends RecyclerView.ViewHolder{
@@ -47,14 +47,17 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
 
     @Override
     public void onBindViewHolder(@NonNull RecallViewHolder holder, int position) {
-        RecallItem currentItem = mRecallItem.get(position);
-        holder.recallImage.setImageResource(currentItem.getImageRecallResource());
-        holder.recallText.setText(currentItem.getRecallNotification());
+        Payload currentItem = mPayload.get(position);
+
+        String name = currentItem.getName();
+        String subtitle = currentItem.getSubtitle();
+
+        holder.recallText.setText(name);
     }
 
     @Override
     public int getItemCount() {
-        return mRecallItem.size();
+        return mPayload.size();
     }
 
 }

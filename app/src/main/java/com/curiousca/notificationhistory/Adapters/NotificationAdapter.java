@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.curiousca.notificationhistory.DataClasses.NotificationItem;
+import com.curiousca.notificationhistory.Model.Payload;
 import com.curiousca.notificationhistory.R;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
     private Context mContext;
-    private ArrayList<NotificationItem> mNotificationItem;
+    private ArrayList<Payload> mPayload;
 
-    public NotificationAdapter(Context context, ArrayList<NotificationItem> notificationItem) {
+    public NotificationAdapter(Context context, ArrayList<Payload> notificationItem) {
         this.mContext = context;
-        this.mNotificationItem = notificationItem;
+        this.mPayload = notificationItem;
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder{
@@ -46,16 +46,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
-        NotificationItem currentItem = mNotificationItem.get(position);
-        holder.notificationImage.setImageResource(currentItem.getImageNotificationResource());
-        holder.notificationText.setText(currentItem.getNotificationNotification());
-        holder.notificationDate.setText(currentItem.getNotificationMessage());
+    public void onBindViewHolder(@NonNull NotificationAdapter.NotificationViewHolder holder, int position) {
+        Payload currentItem = mPayload.get(position);
+
+        holder.notificationText.setText(currentItem.getName());
+        holder.notificationDate.setText(currentItem.getSubtitle());
     }
 
     @Override
     public int getItemCount() {
-        return mNotificationItem.size();
+        return mPayload.size();
     }
 
 }
+
+
+
