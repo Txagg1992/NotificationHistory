@@ -6,10 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.curiousca.notificationhistory.Model.Payload;
+import com.curiousca.notificationhistory.Model.RecallPayload;
 import com.curiousca.notificationhistory.R;
 
 import java.util.ArrayList;
@@ -17,22 +16,20 @@ import java.util.ArrayList;
 public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallViewHolder> {
 
     private Context mContext;
-    private ArrayList<Payload> mPayload;
+    private ArrayList<RecallPayload> mPayload;
 
-    public RecallAdapter(Context context, ArrayList<Payload> recallItem) {
+    public RecallAdapter(Context context, ArrayList<RecallPayload> recallItem) {
         this.mContext = context ;
         this.mPayload = recallItem;
     }
 
     public static class RecallViewHolder extends RecyclerView.ViewHolder{
 
-        public ImageView recallImage;
         public TextView recallText;
 
         public RecallViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            recallImage = itemView.findViewById(R.id.image_view_alert);
             recallText = itemView.findViewById(R.id.text_view_recall);
         }
     }
@@ -47,12 +44,11 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
 
     @Override
     public void onBindViewHolder(@NonNull RecallViewHolder holder, int position) {
-        Payload currentItem = mPayload.get(position);
+        RecallPayload currentItem = mPayload.get(position);
 
-        String name = currentItem.getName();
         String subtitle = currentItem.getSubtitle();
 
-        holder.recallText.setText(name);
+        holder.recallText.setText(currentItem.getName());
     }
 
     @Override

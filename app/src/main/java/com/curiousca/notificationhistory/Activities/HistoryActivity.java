@@ -9,12 +9,15 @@ import android.widget.Toast;
 
 import com.curiousca.notificationhistory.Adapters.NotificationAdapter;
 import com.curiousca.notificationhistory.Adapters.RecallAdapter;
-import com.curiousca.notificationhistory.DataClasses.NotificationItem;
-import com.curiousca.notificationhistory.DataClasses.RecallItem;
+import com.curiousca.notificationhistory.DataInterfaces.NotificationItem;
+import com.curiousca.notificationhistory.DataInterfaces.RecallItem;
+import com.curiousca.notificationhistory.DataInterfaces.RecallPayloadAPI;
 import com.curiousca.notificationhistory.Model.Data;
 import com.curiousca.notificationhistory.Model.Payload;
+import com.curiousca.notificationhistory.Model.RecallData;
+import com.curiousca.notificationhistory.Model.RecallPayload;
 import com.curiousca.notificationhistory.R;
-import com.curiousca.notificationhistory.RecallPayloadAPI;
+import com.curiousca.notificationhistory.DataInterfaces.NotificationPayloadAPI;
 
 import java.util.ArrayList;
 
@@ -39,7 +42,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     private ArrayList<Payload> mPayload;
     private static final String BASE_NOTIFY_URL = "https://one-np.stg.telematicsct.com/";
-    private static final String BASE_RECALL_URL = "https://one-np.stg.telematicsct.com/";
+    private static final String BASE_RECALL_URL = "http://api.icndb.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,51 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void parseRecallJson(){
         try {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_RECALL_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            final RecallPayloadAPI payloadAPI = retrofit.create(RecallPayloadAPI.class);
+
+            Call<RecallData> call = payloadAPI.getPayload();
+            try {
+                call.enqueue(new Callback<RecallData>() {
+                    @Override
+                    public void onResponse(Call<RecallData> call, Response<RecallData> response) {
+                        if (!response.isSuccessful()){
+                            Toast.makeText(getApplicationContext(), "Code: " + response.code(),
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d("Not Response Successful", "CODE: " + response.code());
+                            return;
+                        }else {
+                            Toast.makeText(getApplicationContext(), "Code: " + response.code(),
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d("Success!", "Response CODE is: " + response.code());
+                        }
+
+                        ArrayList<RecallPayload> payload = response.body().getPayload();
+                        for (int i = 0; i < payload.size(); i++){
+                            payload.get(i).getName();
+                            payload.get(i).getSubtitle();
+                            Log.d(TAG, "onResopnse: \n"+
+                                    "Name: " + payload.get(i).getName() + "\n" +
+                                    "Subtitle: " + payload.get(i).getSubtitle());
+                        }
+
+                        mRecallAdapter = new RecallAdapter(getApplicationContext(), payload);
+                        mRecyclerViewRecall.setAdapter(mRecallAdapter);
+                    }
+
+                    @Override
+                    public void onFailure(Call<RecallData> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.d("onFailure", t.getMessage());
+                    }
+                });
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }catch (Exception e){
             e.printStackTrace();
@@ -75,7 +123,7 @@ public class HistoryActivity extends AppCompatActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            RecallPayloadAPI payloadAPI = retrofit.create(RecallPayloadAPI.class);
+            NotificationPayloadAPI payloadAPI = retrofit.create(NotificationPayloadAPI.class);
 
             Call<Data> call = payloadAPI.getPayload();
             try {
@@ -103,12 +151,13 @@ public class HistoryActivity extends AppCompatActivity {
                                     "Subtitle: " + payload.get(i).getSubtitle());
                         }
                         mNotificationAdapter = new NotificationAdapter(getApplicationContext(), payload);
-                        mRecyclerViewRecall.setAdapter(mNotificationAdapter);
+                        mRecyclerViewNotify.setAdapter(mNotificationAdapter);
                     }
 
                     @Override
                     public void onFailure(Call<Data> call, Throwable t) {
-
+                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.d("onFailure", t.getMessage());
                     }
                 });
             }catch (Exception e){

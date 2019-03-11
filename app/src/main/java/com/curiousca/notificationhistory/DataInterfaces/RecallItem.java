@@ -1,4 +1,4 @@
-package com.curiousca.notificationhistory.DataClasses;
+package com.curiousca.notificationhistory.DataInterfaces;
 
 public class RecallItem {
 
