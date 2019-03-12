@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.curiousca.notificationhistory.Adapters.RecallAdapter;
+import com.curiousca.notificationhistory.Adapters.RecallDetailAdapter;
 import com.curiousca.notificationhistory.DataInterfaces.RecallPayloadAPI;
 import com.curiousca.notificationhistory.Model.RecallData;
 import com.curiousca.notificationhistory.Model.RecallPayload;
@@ -29,7 +29,7 @@ public class RecallDetailActivity extends AppCompatActivity {
 
     private TextView textViewRecallDetail;
     private RecyclerView dRecyclerViewRecall;
-    private RecallAdapter dRecallAdapter;
+    private RecallDetailAdapter dRecallAdapter;
     private ArrayList<RecallPayload> dRecallPayload;
 
     private static final String BASE_RECALL_URL = "http://api.icndb.com/";
@@ -42,12 +42,6 @@ public class RecallDetailActivity extends AppCompatActivity {
         buildRecallRecyclerView();
         parseRecallJson();
 
-//        Intent intent = getIntent();
-//        Class<?> recallNotice = (Class<?>) intent.getClass(RecallAdapter.class);
-//
-//        textViewRecallDetail = findViewById(R.id.text_view_recall_detail);
-//
-//        textViewRecallDetail.setText(recallNotice);
     }
 
     private void parseRecallJson(){
@@ -84,7 +78,7 @@ public class RecallDetailActivity extends AppCompatActivity {
                                     "Subtitle: " + payload.get(i).getSubtitle());
                         }
 
-                        dRecallAdapter = new RecallAdapter(getApplicationContext(), payload);
+                        dRecallAdapter = new RecallDetailAdapter(getApplicationContext(), payload);
                         dRecyclerViewRecall.setAdapter(dRecallAdapter);
                     }
 
