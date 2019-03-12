@@ -17,26 +17,26 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
 
     private Context mContext;
     private ArrayList<RecallPayload> mPayload;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
 
     public RecallAdapter(Context context, ArrayList<RecallPayload> recallItem) {
         this.mContext = context ;
         this.mPayload = recallItem;
     }
 
-    public static class RecallViewHolder extends RecyclerView.ViewHolder{
-
-        public TextView recallText;
-
-        public RecallViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            recallText = itemView.findViewById(R.id.text_view_recall);
-        }
-    }
-
     @NonNull
     @Override
     public RecallViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+
         View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.card_recall, parent, false);
         return new RecallViewHolder(view);
@@ -46,9 +46,8 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
     public void onBindViewHolder(@NonNull RecallViewHolder holder, int position) {
         RecallPayload currentItem = mPayload.get(position);
 
-        String subtitle = currentItem.getSubtitle();
-
         holder.recallText.setText(currentItem.getName());
+
     }
 
     @Override
@@ -56,4 +55,25 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
         return mPayload.size();
     }
 
+    public class RecallViewHolder extends RecyclerView.ViewHolder{
+        public TextView recallText;
+
+        public RecallViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recallText = itemView.findViewById(R.id.text_view_recall);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            mListener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.curiousca.notificationhistory.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,15 +10,13 @@ import android.widget.Toast;
 
 import com.curiousca.notificationhistory.Adapters.NotificationAdapter;
 import com.curiousca.notificationhistory.Adapters.RecallAdapter;
-import com.curiousca.notificationhistory.DataInterfaces.NotificationItem;
-import com.curiousca.notificationhistory.DataInterfaces.RecallItem;
+import com.curiousca.notificationhistory.DataInterfaces.NotificationPayloadAPI;
 import com.curiousca.notificationhistory.DataInterfaces.RecallPayloadAPI;
 import com.curiousca.notificationhistory.Model.Data;
 import com.curiousca.notificationhistory.Model.Payload;
 import com.curiousca.notificationhistory.Model.RecallData;
 import com.curiousca.notificationhistory.Model.RecallPayload;
 import com.curiousca.notificationhistory.R;
-import com.curiousca.notificationhistory.DataInterfaces.NotificationPayloadAPI;
 
 import java.util.ArrayList;
 
@@ -27,12 +26,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends AppCompatActivity implements RecallAdapter.OnItemClickListener{
+
+    public static final String EXTRA_RECALL_NOTICE = "recallNotice";
 
     private static final String TAG = "HistoryActivity";
 
-    private ArrayList<RecallItem> mRecallItem;
-    private ArrayList<NotificationItem> mNotificationItem;
+//    private ArrayList<RecallItem> mRecallItem;
+//    private ArrayList<NotificationItem> mNotificationItem;
 
     private RecyclerView mRecyclerViewRecall;
     private RecyclerView mRecyclerViewNotify;
@@ -41,6 +42,8 @@ public class HistoryActivity extends AppCompatActivity {
     private NotificationAdapter mNotificationAdapter;
 
     private ArrayList<Payload> mPayload;
+    private ArrayList<RecallPayload> mRecallPayload;
+
     private static final String BASE_NOTIFY_URL = "https://one-np.stg.telematicsct.com/";
     private static final String BASE_RECALL_URL = "http://api.icndb.com/";
 
@@ -49,18 +52,19 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        createRecallItems();
-        createNotificationItems();
+        mPayload = new ArrayList<>();
+
+//        createRecallItems();
+//        createNotificationItems();
         buildRecallRecyclerView();
         buildNotificationRecyclerView();
         parseNotificationJson();
         parseRecallJson();
 
-        mPayload = new ArrayList<Payload>();
 
-        if (mRecallItem.isEmpty() && mNotificationItem.isEmpty()){
-            setContentView(R.layout.empty_notifications);
-        }
+//        if (mRecallPayload.isEmpty() && mPayload.isEmpty()){
+//            setContentView(R.layout.empty_notifications);
+//        }
     }
 
     private void parseRecallJson(){
@@ -70,7 +74,7 @@ public class HistoryActivity extends AppCompatActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            final RecallPayloadAPI payloadAPI = retrofit.create(RecallPayloadAPI.class);
+            RecallPayloadAPI payloadAPI = retrofit.create(RecallPayloadAPI.class);
 
             Call<RecallData> call = payloadAPI.getPayload();
             try {
@@ -78,14 +82,14 @@ public class HistoryActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<RecallData> call, Response<RecallData> response) {
                         if (!response.isSuccessful()){
-                            Toast.makeText(getApplicationContext(), "Code: " + response.code(),
+                            Toast.makeText(getApplicationContext(), "Recall Code: " + response.code(),
                                     Toast.LENGTH_SHORT).show();
-                            Log.d("Not Response Successful", "CODE: " + response.code());
+                            Log.d("Not Response Successful", "RECALL CODE: " + response.code());
                             return;
                         }else {
-                            Toast.makeText(getApplicationContext(), "Code: " + response.code(),
+                            Toast.makeText(getApplicationContext(), "Recall Code: " + response.code(),
                                     Toast.LENGTH_SHORT).show();
-                            Log.d("Success!", "Response CODE is: " + response.code());
+                            Log.d("Success!", "Response RECALL CODE is: " + response.code());
                         }
 
                         ArrayList<RecallPayload> payload = response.body().getPayload();
@@ -99,6 +103,7 @@ public class HistoryActivity extends AppCompatActivity {
 
                         mRecallAdapter = new RecallAdapter(getApplicationContext(), payload);
                         mRecyclerViewRecall.setAdapter(mRecallAdapter);
+                        mRecallAdapter.setOnItemClickListener(HistoryActivity.this);
                     }
 
                     @Override
@@ -172,38 +177,51 @@ public class HistoryActivity extends AppCompatActivity {
         mRecyclerViewRecall = findViewById(R.id.recycler_view_recall);
         mRecyclerViewRecall.setHasFixedSize(true);
         mRecyclerViewRecall.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerViewRecall.setAdapter(mRecallAdapter);
     }
 
     private void buildNotificationRecyclerView(){
         mRecyclerViewNotify = findViewById(R.id.recycler_view_notify);
         mRecyclerViewNotify.setHasFixedSize(true);
         mRecyclerViewNotify.setLayoutManager(new LinearLayoutManager(this));
+    }
 
-        mRecyclerViewNotify.setAdapter(mNotificationAdapter);
+    @Override
+    public void onItemClick(int position) {
+
+        mRecallPayload = new  ArrayList<>();
+
+        Log.d(TAG, "Somebody clicked me at position " + position);
+
+        Intent detailIntent = new Intent(this, RecallDetailActivity.class);
+//        RecallPayload clickedItem = mRecallPayload.get(position);
+//
+//        detailIntent.putExtra(EXTRA_RECALL_NOTICE, clickedItem.getName());
+
+        startActivity(detailIntent);
+
     }
 
 
-//This code is not needed when information is dynamic
-    private void createRecallItems(){
-        mRecallItem = new ArrayList<>();
-        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum, 0));
-        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum, 0));
-//        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum_1, 0));
-    }
 
-    private void createNotificationItems(){
-        mNotificationItem = new ArrayList<>();
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum_1, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum_1, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum_1, R.string.date));
-        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum_1, R.string.date));
-    }
+    //This code is not needed when information is dynamic
+//    private void createRecallItems(){
+//        mRecallItem = new ArrayList<>();
+//        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum, 0));
+//        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum, 0));
+////        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum_1, 0));
+//    }
+//
+//    private void createNotificationItems(){
+//        mNotificationItem = new ArrayList<>();
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum_1, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_message_black, R.string.lorem_ipsum_1, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_bell_off_outline_black_48dp, R.string.lorem_ipsum_1, R.string.date));
+//        mNotificationItem.add(new NotificationItem(R.drawable.ic_check_circle_black, R.string.lorem_ipsum_1, R.string.date));
+//    }
 
 }
