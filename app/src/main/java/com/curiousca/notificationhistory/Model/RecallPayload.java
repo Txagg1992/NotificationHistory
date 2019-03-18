@@ -13,6 +13,11 @@ public class RecallPayload {
     @SerializedName("id")
     private String subtitle;
 
+    public RecallPayload(String name, String subtitle) {
+        this.name = name;
+        this.subtitle = subtitle;
+    }
+
     public String getName() {
         return name;
     }

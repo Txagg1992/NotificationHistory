@@ -12,12 +12,32 @@
         android:layout_height="match_parent"
         android:padding="4dp">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_recall"
+        <TextView
+            android:id="@+id/text_view_recall_detail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:itemcount="2"
-            tools:listitem="@layout/card_recall" />
+            android:layout_height="wrap_content"
+            android:textSize="36sp"
+            android:text="STUFF"
+            android:textColor="#000"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
+        <TextView
+            android:id="@+id/text_view_recall_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="More STUFF"
+            android:textColor="#FF0000"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@+id/text_view_recall_detail"/>
+
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/recycler_view_recall"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--tools:itemcount="2"-->
+            <!--tools:listitem="@layout/card_recall" />-->
 
     </RelativeLayout>
 

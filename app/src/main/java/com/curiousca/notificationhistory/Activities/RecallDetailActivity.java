@@ -1,5 +1,6 @@
 package com.curiousca.notificationhistory.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,12 +23,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.curiousca.notificationhistory.Activities.HistoryActivity.EXTRA_RECALL_NAME;
+import static com.curiousca.notificationhistory.Activities.HistoryActivity.EXTRA_RECALL_SUBTITLE;
+
 public class RecallDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "RecallDetailActivity";
 
 
     private TextView textViewRecallDetail;
+    private TextView textViewRecallSubtitle;
     private RecyclerView dRecyclerViewRecall;
     private RecallDetailAdapter dRecallAdapter;
     private ArrayList<RecallPayload> dRecallPayload;
@@ -39,8 +44,24 @@ public class RecallDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recall_detail);
 
-        buildRecallRecyclerView();
-        parseRecallJson();
+        getExtras();
+
+//        buildRecallRecyclerView();
+//        parseRecallJson();
+
+    }
+
+    private void getExtras(){
+
+        Intent intent = getIntent();
+        String name = intent.getStringExtra(EXTRA_RECALL_NAME);
+        String subtitle = intent.getStringExtra(EXTRA_RECALL_SUBTITLE);
+
+        textViewRecallDetail = findViewById(R.id.text_view_recall_detail);
+        textViewRecallSubtitle = findViewById(R.id.text_view_recall_subtitle);
+
+        textViewRecallDetail.setText(name);
+        textViewRecallSubtitle.setText(subtitle);
 
     }
 

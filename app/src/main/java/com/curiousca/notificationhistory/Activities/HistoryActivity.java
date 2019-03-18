@@ -2,9 +2,11 @@ package com.curiousca.notificationhistory.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,7 +30,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HistoryActivity extends AppCompatActivity implements RecallAdapter.OnItemClickListener{
 
-    public static final String EXTRA_RECALL_NOTICE = "recallNotice";
+    public static final String EXTRA_RECALL_NAME = "recallName";
+    public static final String EXTRA_RECALL_SUBTITLE = "recallSubtitle";
 
     private static final String TAG = "HistoryActivity";
 
@@ -60,7 +63,7 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
         buildNotificationRecyclerView();
         parseNotificationJson();
         parseRecallJson();
-
+        initSwipeToDelete();
 
 //        if (mRecallPayload.isEmpty() && mPayload.isEmpty()){
 //            setContentView(R.layout.empty_notifications);
@@ -92,18 +95,22 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
                             Log.d("Success!", "Response RECALL CODE is: " + response.code());
                         }
 
-                        ArrayList<RecallPayload> payload = response.body().getPayload();
-                        for (int i = 0; i < payload.size(); i++){
-                            payload.get(i).getName();
-                            payload.get(i).getSubtitle();
-                            Log.d(TAG, "onResopnse: \n"+
-                                    "Name: " + payload.get(i).getName() + "\n" +
-                                    "Subtitle: " + payload.get(i).getSubtitle());
-                        }
+                        //ArrayList<RecallPayload> payload = response.body().getPayload();
 
-                        mRecallAdapter = new RecallAdapter(getApplicationContext(), payload);
+                        mRecallPayload = response.body().getPayload();
+
+                        mRecallAdapter = new RecallAdapter(getApplicationContext(), mRecallPayload);
                         mRecyclerViewRecall.setAdapter(mRecallAdapter);
                         mRecallAdapter.setOnItemClickListener(HistoryActivity.this);
+
+                        for (int i = 0; i < mRecallPayload.size(); i++){
+                            mRecallPayload.get(i).getName();
+                            mRecallPayload.get(i).getSubtitle();
+                            Log.d(TAG, "onResopnse: \n"+
+                                    "Name: " + mRecallPayload.get(i).getName() + "\n" +
+                                    "Subtitle: " + mRecallPayload.get(i).getSubtitle());
+                        }
+
                     }
 
                     @Override
@@ -157,6 +164,7 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
                         }
                         mNotificationAdapter = new NotificationAdapter(getApplicationContext(), payload);
                         mRecyclerViewNotify.setAdapter(mNotificationAdapter);
+                        //mNotificationAdapter.submitList(notes);
                     }
 
                     @Override
@@ -188,22 +196,37 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
     @Override
     public void onItemClick(int position) {
 
-        mRecallPayload = new  ArrayList<>();
+//        mRecallPayload = new  ArrayList<>();
 
         Log.d(TAG, "Somebody clicked me at position " + position);
 
         Intent detailIntent = new Intent(this, RecallDetailActivity.class);
-//        RecallPayload clickedItem = mRecallPayload.get(position);
-//
-//        detailIntent.putExtra(EXTRA_RECALL_NOTICE, clickedItem.getName());
+        RecallPayload clickedItem = mRecallPayload.get(position);
+
+        detailIntent.putExtra(EXTRA_RECALL_NAME, clickedItem.getName());
+        detailIntent.putExtra(EXTRA_RECALL_SUBTITLE, clickedItem.getSubtitle());
 
         startActivity(detailIntent);
 
     }
 
+    public void initSwipeToDelete(){
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
 
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                viewHolder.getAdapterPosition();
+            }
+        }).attachToRecyclerView(mRecyclerViewNotify);
+    }
 
     //This code is not needed when information is dynamic
+
 //    private void createRecallItems(){
 //        mRecallItem = new ArrayList<>();
 //        mRecallItem.add(new RecallItem(R.drawable.alert_red, R.string.lorem_ipsum, 0));

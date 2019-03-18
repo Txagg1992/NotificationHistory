@@ -22,6 +22,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public NotificationAdapter(Context context, ArrayList<Payload> notificationItem) {
         this.mContext = context;
         this.mPayload = notificationItem;
+        notifyDataSetChanged();
     }
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder{
