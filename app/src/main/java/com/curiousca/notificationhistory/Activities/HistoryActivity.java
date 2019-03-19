@@ -240,7 +240,7 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
                                     int actionState,
                                     boolean isCurrentlyActive) {
                 View itemView = viewHolder.itemView;
-                int iconMargin = (itemView.getHeight()/2 - deleteIcon.getMinimumHeight())/2;
+                int iconMargin = (itemView.getHeight() - deleteIcon.getMinimumHeight())/2;
 
                 if (dX > 0){
                     swipeBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight(), itemView.getBottom());
