@@ -1,14 +1,19 @@
 package com.curiousca.notificationhistory.Activities;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.curiousca.notificationhistory.Adapters.NotificationAdapter;
@@ -31,8 +36,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HistoryActivity extends AppCompatActivity implements RecallAdapter.OnItemClickListener{
 
-    CoordinatorLayout historyLayout = null;
-
+    private ColorDrawable swipeBackground = new ColorDrawable(Color.parseColor("#ff0000"));
+    private Drawable deleteIcon;
 
     public static final String EXTRA_RECALL_NAME = "recallName";
     public static final String EXTRA_RECALL_SUBTITLE = "recallSubtitle";
@@ -197,8 +202,6 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
     @Override
     public void onItemClick(int position) {
 
-//        mRecallPayload = new  ArrayList<>();
-
         Log.d(TAG, "Somebody clicked me at position " + position);
 
         Intent detailIntent = new Intent(this, RecallDetailActivity.class);
@@ -208,10 +211,13 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
         detailIntent.putExtra(EXTRA_RECALL_SUBTITLE, clickedItem.getSubtitle());
 
         startActivity(detailIntent);
-
     }
 
     public void initSwipeToDelete(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            deleteIcon = getDrawable(R.drawable.ic_delete);
+        }
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -223,9 +229,37 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
                 viewHolder.getAdapterPosition();
                 mNotificationAdapter.removeItem(viewHolder);
+            }
 
+            @Override
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX,
+                                    float dY,
+                                    int actionState,
+                                    boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+                int iconMargin = (itemView.getHeight() - deleteIcon.getMinimumHeight())/2;
 
+                if (dX > 0){
+                    swipeBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                    deleteIcon.setBounds(itemView.getLeft() + iconMargin,
+                            itemView.getTop() + iconMargin,
+                            itemView.getLeft() + iconMargin + deleteIcon.getIntrinsicWidth(),
+                            itemView.getBottom() - iconMargin);
+                }else {
+                    swipeBackground.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                    deleteIcon.setBounds(itemView.getRight() - iconMargin - deleteIcon.getIntrinsicWidth(),
+                            itemView.getTop() + iconMargin,
+                            itemView.getRight() - iconMargin,
+                            itemView.getBottom() - iconMargin);
 
+                }
+
+                swipeBackground.draw(c);
+                deleteIcon.draw(c);
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         }).attachToRecyclerView(mRecyclerViewNotify);
 

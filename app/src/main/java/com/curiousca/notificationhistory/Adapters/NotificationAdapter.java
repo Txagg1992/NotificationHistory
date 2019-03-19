@@ -61,13 +61,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     public void removeItem(RecyclerView.ViewHolder viewHolder) {
         removedPosition = viewHolder.getAdapterPosition();
-        removedCard = (mPayload.get(viewHolder.getAdapterPosition()));
+        removedCard = mPayload.get(viewHolder.getAdapterPosition());
 
         mPayload.remove(viewHolder.getAdapterPosition());
         notifyItemRemoved (viewHolder.getAdapterPosition());
 
-
-        Snackbar.make(viewHolder.itemView, "1 Notification Deleted", Snackbar.LENGTH_LONG)
+        Snackbar.make(viewHolder.itemView, "Notification Deleted", Snackbar.LENGTH_LONG)
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -78,7 +77,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 .show();
 
     }
-
 
     @Override
     public int getItemCount() {
