@@ -3,6 +3,7 @@ package com.curiousca.notificationhistory.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +30,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HistoryActivity extends AppCompatActivity implements RecallAdapter.OnItemClickListener{
+
+    CoordinatorLayout historyLayout = null;
+
 
     public static final String EXTRA_RECALL_NAME = "recallName";
     public static final String EXTRA_RECALL_SUBTITLE = "recallSubtitle";
@@ -62,6 +66,7 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
         parseNotificationJson();
         parseRecallJson();
         initSwipeToDelete();
+
 
 //        if (mRecallPayload.isEmpty() && mPayload.isEmpty()){
 //            setContentView(R.layout.empty_notifications);
@@ -217,9 +222,14 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
                 viewHolder.getAdapterPosition();
-                mNotificationAdapter.removeItem(viewHolder.getAdapterPosition());
+                mNotificationAdapter.removeItem(viewHolder);
+
+
+
             }
         }).attachToRecyclerView(mRecyclerViewNotify);
+
+
     }
 
     //This code is not needed when information is dynamic
