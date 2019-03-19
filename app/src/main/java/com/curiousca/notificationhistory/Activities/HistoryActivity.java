@@ -55,8 +55,6 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        mPayload = new ArrayList<>();
-
 //        createRecallItems();
 //        createNotificationItems();
         buildRecallRecyclerView();
@@ -94,8 +92,6 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
                                     Toast.LENGTH_SHORT).show();
                             Log.d("Success!", "Response RECALL CODE is: " + response.code());
                         }
-
-                        //ArrayList<RecallPayload> payload = response.body().getPayload();
 
                         mRecallPayload = response.body().getPayload();
 
@@ -153,16 +149,16 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
                             Log.d("Success!", "Response CODE is: " + response.code());
                         }
 
-                        ArrayList<Payload> payload = response.body().getPayload();
-                        for (int i = 0; i < payload.size(); i++){
-                            payload.get(i).getName();
-                            payload.get(i).getSubtitle();
+                        mPayload = response.body().getPayload();
+                        for (int i = 0; i < mPayload.size(); i++){
+                            mPayload.get(i).getName();
+                            mPayload.get(i).getSubtitle();
 
                             Log.d(TAG, "onResopnse: \n"+
-                                    "Name: " + payload.get(i).getName() + "\n" +
-                                    "Subtitle: " + payload.get(i).getSubtitle());
+                                    "Name: " + mPayload.get(i).getName() + "\n" +
+                                    "Subtitle: " + mPayload.get(i).getSubtitle());
                         }
-                        mNotificationAdapter = new NotificationAdapter(getApplicationContext(), payload);
+                        mNotificationAdapter = new NotificationAdapter(getApplicationContext(), mPayload);
                         mRecyclerViewNotify.setAdapter(mNotificationAdapter);
                         //mNotificationAdapter.submitList(notes);
                     }
@@ -219,8 +215,9 @@ public class HistoryActivity extends AppCompatActivity implements RecallAdapter.
             }
 
             @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
                 viewHolder.getAdapterPosition();
+                mNotificationAdapter.removeItem(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(mRecyclerViewNotify);
     }

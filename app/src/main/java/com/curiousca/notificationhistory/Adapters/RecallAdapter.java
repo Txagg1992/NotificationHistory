@@ -19,6 +19,23 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
     private ArrayList<RecallPayload> mPayload;
     private OnItemClickListener mListener;
 
+//    protected RecallAdapter() {
+//        super(DIFF_CALLBACK);
+//    }
+//
+//    private static final DiffUtil.ItemCallback<RecallPayload> DIFF_CALLBACK = new DiffUtil.ItemCallback<RecallPayload>() {
+//        @Override
+//        public boolean areItemsTheSame(@NonNull RecallPayload oldItem, @NonNull RecallPayload newItem) {
+//            return oldItem.getName() == newItem.getName() ;
+//        }
+//
+//        @Override
+//        public boolean areContentsTheSame(@NonNull RecallPayload oldItem, @NonNull RecallPayload newItem) {
+//            return oldItem.getName().equals(newItem.getName()) && oldItem.getSubtitle().equals(newItem.getSubtitle());
+//        }
+//    };
+
+
     public interface OnItemClickListener{
         void onItemClick(int position);
     }
@@ -76,4 +93,5 @@ public class RecallAdapter extends RecyclerView.Adapter<RecallAdapter.RecallView
 
         }
     }
+
 }

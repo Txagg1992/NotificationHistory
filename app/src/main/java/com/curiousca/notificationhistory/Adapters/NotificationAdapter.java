@@ -25,6 +25,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         notifyDataSetChanged();
     }
 
+    public void removeItem(int adapterPosition) {
+        mPayload.remove(adapterPosition);
+        notifyItemRemoved(adapterPosition);
+    }
+
     public static class NotificationViewHolder extends RecyclerView.ViewHolder{
         public ImageView notificationImage;
         public TextView notificationText;
